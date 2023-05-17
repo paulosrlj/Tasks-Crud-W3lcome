@@ -1,15 +1,18 @@
-import { type TaskUpdate, type Task } from '../domain/models/Task'
+import { type TaskUpdate, type Task, type TaskCreation } from '../domain/models/Task'
 
 import { tasks } from '../data'
 
 export default class TaskService {
+  innerIdCount = 3
+
   getById (taskId: number): Task {
     const index = tasks.findIndex((value) => value.id === taskId)
     return tasks[index]
   }
 
-  create (task: Task): Task {
-    tasks.push(task)
+  create (task: TaskCreation): TaskCreation {
+    const newTask = { id: ++this.innerIdCount, ...task, concluida: false }
+    tasks.push(newTask)
     return task
   }
 

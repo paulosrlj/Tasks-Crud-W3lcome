@@ -1,7 +1,7 @@
 import { type Request, type Response } from 'express'
 
 import type TaskService from '../../services/TaskService'
-import { type TaskUpdate, type Task } from '../../domain/models/Task'
+import { type TaskUpdate, type TaskCreation } from '../../domain/models/Task'
 
 export default class TaskController {
   private readonly taskService
@@ -11,7 +11,6 @@ export default class TaskController {
   }
 
   getById (req: Request, res: Response): Express.Response {
-    console.log(req.params.id)
     const taskId = parseInt(req.params.id) as unknown as number
 
     const task = this.taskService.getById(taskId)
@@ -20,9 +19,7 @@ export default class TaskController {
   }
 
   create (req: Request, res: Response): Express.Response {
-    console.log(req.body)
-
-    const taskBody = req.body as Task
+    const taskBody = req.body as TaskCreation
 
     const task = this.taskService.create(taskBody)
 
