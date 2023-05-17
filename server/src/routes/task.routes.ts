@@ -8,6 +8,7 @@ const taskController = new TaskController(taskService)
 
 const router = Router()
 
+router.get('/', taskController.getAll.bind(taskController))
 router.get('/:id', taskController.getById.bind(taskController))
 router.post('/', taskController.create.bind(taskController))
 router.patch('/:id', taskController.update.bind(taskController))

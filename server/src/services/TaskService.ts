@@ -5,6 +5,10 @@ import { tasks } from '../data'
 export default class TaskService {
   innerIdCount = 3
 
+  getAll() {
+    return tasks;
+  }
+
   getById (taskId: number): Task {
     const index = tasks.findIndex((value) => value.id === taskId)
     return tasks[index]

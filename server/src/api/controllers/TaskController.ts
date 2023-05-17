@@ -10,6 +10,12 @@ export default class TaskController {
     this.taskService = taskService
   }
 
+  getAll (req: Request, res: Response): Express.Response {
+    const tasks = this.taskService.getAll()
+
+    return res.status(200).json(tasks)
+  }
+
   getById (req: Request, res: Response): Express.Response {
     const taskId = parseInt(req.params.id) as unknown as number
 
