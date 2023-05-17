@@ -1,12 +1,25 @@
-import express, { type Express, type Request, type Response } from 'express'
+import express, { type Express } from 'express'
 
-const app: Express = express()
-const port = 5000
+import tasksRoutes from './routes/task.routes'
+class App {
+  app: Express
 
-app.get('/', (req: Request, res: Response) => {
-  res.send('Express + TypeScript Server')
-})
+  routes (): void {
+    this.app.use('/api/tasks', tasksRoutes)
+  }
 
-app.listen(port, () => {
-  console.log(`⚡️[server]: Server is running at http://localhost:${port}`)
-})
+  middlewares (): void {
+    this.app.use(express.urlencoded({ extended: true }))
+    this.app.use(express.json())
+  }
+
+  constructor () {
+    this.app = express()
+    this.middlewares()
+    this.routes()
+  }
+}
+
+const { app } = new App()
+
+app.listen(5000, () => { console.log('Ouvindo na porta 5000') })
