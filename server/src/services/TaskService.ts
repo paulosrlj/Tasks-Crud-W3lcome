@@ -38,6 +38,11 @@ export default class TaskService {
 
   delete (taskId: number): void {
     const index = tasks.findIndex((value) => value.id === taskId)
+
+    if (index === -1) {
+      throw new Error("A task não existe!");
+    }
+
     tasks.splice(index, 1)
   }
 }
