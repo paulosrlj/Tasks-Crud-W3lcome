@@ -1,18 +1,15 @@
-import { SyntheticEvent, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
-
-import { AiOutlineCheck, AiFillDelete } from "react-icons/ai";
 
 import styles from "./App.module.scss";
 
-type Task = {
-  id: number;
-  titulo: string;
-  concluida: boolean;
-};
+import TaskItem, { Task } from "./components/Task/TaskItem";
+import AddTaskBox from "./components/AddTaskBox/AddTaskBox";
+
+
 
 function App() {
-  const [taskTitle, setTaskTitle] = useState('');
+  const [taskTitle, setTaskTitle] = useState("");
   const [tasks, setTasks] = useState<Array<Task>>([]);
 
   // Buscar as tasks
@@ -35,48 +32,46 @@ function App() {
     if (taskTitle.length === 0) return;
 
     try {
-      const response = await axios.post(
-        `http://localhost:5000/api/tasks/`,
-        {
-          titulo: taskTitle,
-        }
-      );
-  
+      const response = await axios.post(`http://localhost:5000/api/tasks/`, {
+        titulo: taskTitle,
+      });
+
       const createdTask = response.data as Task;
-  
+
       setTasks((oldState) => {
         const newState = [...oldState];
         newState.push(createdTask);
         return newState;
       });
 
-      setTaskTitle('');
-
+      setTaskTitle("");
     } catch (error) {
       console.error(error);
     }
   }
 
   async function updateTask(taskId: number, concluida: boolean) {
-    concluida = !concluida;
-    const response = await axios.patch(
-      `http://localhost:5000/api/tasks/${taskId}`,
-      {
-        concluida,
-      }
-    );
+    try {
+      concluida = !concluida;
+      const response = await axios.patch(
+        `http://localhost:5000/api/tasks/${taskId}`,
+        {
+          concluida,
+        }
+      );
 
-    const updatedTask = response.data as Task;
+      const updatedTask = response.data as Task;
 
-    const index = tasks.findIndex((t) => t.id === updatedTask.id);
+      const index = tasks.findIndex((t) => t.id === updatedTask.id);
 
-    setTasks((oldState) => {
-      const newState = [...oldState];
-      newState[index] = updatedTask;
-      return newState;
-    });
-
-    console.log("Update concluido");
+      setTasks((oldState) => {
+        const newState = [...oldState];
+        newState[index] = updatedTask;
+        return newState;
+      });
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   async function deleteTask(taskId: number) {
@@ -99,36 +94,12 @@ function App() {
   return (
     <div className={styles.container}>
       <div className={styles.tasksBox}>
-        <div className={styles.addBoxContainer}>
-          <div className={styles.addBox}>
-            <input type="text" className={styles.input} onChange={handleTodoTitleChange} value={taskTitle} />
-            <button type="button" className={styles.button} onClick={createTask}>
-              Adicionar
-            </button>
-          </div>
-        </div>
-
+        
+        <AddTaskBox addTaskFnc={createTask} handleTitleChangeFnc={handleTodoTitleChange} taskTitle={taskTitle} />
+        
         <div className={styles.tasksList}>
           {tasks.map((t) => (
-            <div
-              className={`${styles.task} ${t.concluida ? styles.taskDone : ""}`}
-              key={t.id}
-            >
-              <input
-                type="checkbox"
-                id="checkboxDone"
-                name="checkboxDone"
-                className={styles.checkboxDone}
-                defaultChecked={t.concluida}
-                onChange={() => updateTask(t.id, t.concluida)}
-              />
-
-              <p>{t.titulo}</p>
-
-              <div className={styles.taskOpts}>
-                <AiFillDelete size={25} className={styles.taskIcon} onClick={() => deleteTask(t.id)} />
-              </div>
-            </div>
+           <TaskItem task={t} deleteFunction={deleteTask} updateFunction={updateTask} key={t.id} />
           ))}
         </div>
       </div>
